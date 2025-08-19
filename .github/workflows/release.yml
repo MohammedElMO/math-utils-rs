@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest ]
-        node: [ 22 ]
+        os: [ubuntu-latest, macos-latest]
+        node: [22]
 
     steps:
       - name: Checkout code
@@ -64,7 +64,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          shopt -s nullglob
           for pkg in ./npm/*; do
             if [ -f "$pkg/package.json" ]; then
               echo "Publishing $pkg"
@@ -113,10 +112,8 @@ jobs:
           merge-multiple: true
           path: ./npm
 
-      - name: Prepublish main package
-        run: npx -p @napi-rs/cli@latest napi prepublish -t npm
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      - name: Prepublish main package (skip GitHub release)
+        run: npx -p @napi-rs/cli@latest napi prepublish --skip-optional-publish -t npm
 
       - name: Publish main package to npm
         env:
