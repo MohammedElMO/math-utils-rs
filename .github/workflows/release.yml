@@ -14,15 +14,27 @@ permissions:
 jobs:
   build-and-publish-binaries:
     name: Build & publish platform packages
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        node: [22]
+        os: [ ubuntu-latest, macos-latest ]
+        node: [ 22 ]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -35,6 +47,9 @@ jobs:
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+
       - name: Install JS dependencies
         run: npm ci
 
@@ -44,11 +59,18 @@ jobs:
       - name: Show build output
         run: ls -R ./npm
 
-      # Skipping per-platform publish to avoid errors
-      #- name: Publish platform packages to npm
-      #  run: node publish-npm.js
-      #  env:
-      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish platform packages to npm
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          shopt -s nullglob
+          for pkg in ./npm/*; do
+            if [ -f "$pkg/package.json" ]; then
+              echo "Publishing $pkg"
+              npm publish "$pkg" --access public --provenance
+            fi
+          done
 
       - name: Upload npm artifacts (optional)
         uses: actions/upload-artifact@v4
@@ -73,6 +95,17 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           check-latest: true
 
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
       - name: Download platform artifacts
         uses: actions/download-artifact@v4
         with:
@@ -80,8 +113,8 @@ jobs:
           merge-multiple: true
           path: ./npm
 
-      - name: Prepublish main package (skip GitHub release)
-        run: npx -p @napi-rs/cli@latest napi prepublish -t npm --skip-gh-release
+      - name: Prepublish main package
+        run: npx -p @napi-rs/cli@latest napi prepublish -t npm
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
@@ -89,4 +122,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --provenance
-
