@@ -19,7 +19,7 @@
     "bin-math-utils-rs.*.node"
   ],
   "napi": {
-    "binaryName": "bin-math-utils-rs",
+    "binaryName": "math-utils-rs",
     "targets": [
       "x86_64-unknown-linux-musl",
       "aarch64-unknown-linux-gnu",
