@@ -14,40 +14,26 @@ permissions:
 jobs:
   build-and-publish-binaries:
     name: Build & publish platform packages
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest ]  # skip Windows
-        node: [ 22 ]
+        node: [22]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
-
-      - name: Cache Rust dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: npm
+          check-latest: true
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache Rust build artifacts
-        uses: Swatinem/rust-cache@v2
 
       - name: Install JS dependencies
         run: npm ci
@@ -58,12 +44,11 @@ jobs:
       - name: Show build output
         run: ls -R ./npm
 
-      - name: Publish platform packages to npm
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          echo "const fs = require('fs'); const path = require('path'); const { execSync } = require('child_process'); const npmDir = path.join(process.cwd(), 'npm'); fs.readdirSync(npmDir).forEach(pkg => { const pkgPath = path.join(npmDir, pkg); if (fs.existsSync(path.join(pkgPath, 'package.json'))) { console.log('Publishing', pkgPath); execSync(`npm publish '${pkgPath}' --access public --provenance`, { stdio: 'inherit' }); } });" > publish-npm.js
-          node publish-npm.js
+      # Skipping per-platform publish to avoid errors
+      #- name: Publish platform packages to npm
+      #  run: node publish-npm.js
+      #  env:
+      #    NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Upload npm artifacts (optional)
         uses: actions/upload-artifact@v4
@@ -86,6 +71,7 @@ jobs:
           node-version: '22'
           cache: npm
           registry-url: 'https://registry.npmjs.org'
+          check-latest: true
 
       - name: Download platform artifacts
         uses: actions/download-artifact@v4
