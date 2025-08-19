@@ -45,6 +45,8 @@ jobs:
         with:
           name: bindings-${{ matrix.os }}
           path: npm/*
+      - run: ls -R npm
+
 
   publish:
     name: Publish to npm
