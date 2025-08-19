@@ -107,7 +107,9 @@ jobs:
 
       # This updates optionalDependencies + binary metadata for the main package
       - name: Prepublish (prepare main package)
-        run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
+      - run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish main package
         env:

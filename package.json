@@ -1,6 +1,6 @@
 {
   "name": "math-utils-rs",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "math utils with napi-rs",
   "main": "index.js",
   "repository": {
