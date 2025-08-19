@@ -35,9 +35,12 @@ jobs:
 
       - name: Install napi CLI
         run: npm install --global @napi-rs/cli
+
+      - name: Ensure npm folder exists
+        run: mkdir -p npm
       # Build native bindings for this OS only
       - name: Build bindings
-        run: napi build --release --platform --output ./npm
+        run: napi build --release --platform
 
 
       # Upload OS-specific artifacts
@@ -46,7 +49,10 @@ jobs:
         with:
           name: bindings-${{ matrix.os }}
           path: npm/*
-      - run: ls -R npm
+
+      - name: List build output
+        run: ls -R
+
 
 
   publish:
