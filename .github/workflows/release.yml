@@ -32,7 +32,8 @@ jobs:
         run: npm ci
 
       - name: Build bindings for this platform
-        run: npx -p @napi-rs/cli@latest build --platform --release --output-dir ./npm
+        run: npx -p @napi-rs/cli@latest napi build --platform --release --output-dir ./npm
+
 
       - name: Show build output
         run: ls -R ./npm
@@ -70,7 +71,7 @@ jobs:
 
       # This updates optionalDependencies + binary metadata for the main package
       - name: Prepublish (prepare main package)
-        run: npx -p @napi-rs/cli@latest prepublish -t npm
+        run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
 
       - name: Publish main package
         env:
