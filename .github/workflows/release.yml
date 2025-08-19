@@ -112,7 +112,7 @@ jobs:
       - name: Prepublish (prepare main package)
         run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
       - name: Publish main package
         env:
