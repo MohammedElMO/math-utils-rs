@@ -1,25 +1,25 @@
-name: Release
-
-on:
-  release:
-    types: [published]
-
-jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - run: npm install -g @napi-rs/cli
-      - run: napi build --release --target x86_64-unknown-linux-gnu
-      - run: napi prepublish --tag latest
+#name: Release
+#
+#on:
+#  release:
+#    types: [published]
+#
+#jobs:
+#  build:
+#    runs-on: ${{ matrix.os }}
+#    strategy:
+#      matrix:
+#        os: [ubuntu-latest, macos-latest, windows-latest]
+#
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: 20
+#      - uses: actions-rs/toolchain@v1
+#        with:
+#          toolchain: stable
+#          override: true
+#      - run: npm install -g @napi-rs/cli
+#      - run: napi build --release --target x86_64-unknown-linux-gnu
+#      - run: napi prepublish --tag latest
