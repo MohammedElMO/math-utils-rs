@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*' # trigger only on tag push
 
 jobs:
   build:
@@ -17,30 +17,30 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      # Install Node.js
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           check-latest: true
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+      # Install Rust
+      - uses: dtolnay/rust-toolchain@stable
 
-      - name: Cache Cargo
-        uses: Swatinem/rust-cache@v2
+      # Cache Cargo
+      - uses: Swatinem/rust-cache@v2
 
-      - name: Install dependencies
-        run: npm ci
+      # Install dependencies locally
+      - run: npm ci
 
-      - name: Install napi CLI
-        run: npm install --global @napi-rs/cli
-
+      # Build bindings using local napi CLI
       - name: Build bindings
-        run: napi build --release --output-dir ./npm
+        run: npx @napi-rs/cli build --release --output-dir ./npm
 
+      # List build output
       - name: List build output
         run: ls -R ./npm
 
+      # Upload OS-specific artifacts
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -55,20 +55,29 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
+      # Download artifacts from all OSes
+      - uses: actions/download-artifact@v4
         with:
           name: bindings-ubuntu-latest
           path: ./npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: bindings-macos-latest
+          path: ./npm
+      - uses: actions/download-artifact@v4
+        with:
+          name: bindings-windows-latest
+          path: ./npm
 
-      - name: Install Node.js
-        uses: actions/setup-node@v4
+      # Setup Node
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Authenticate npm
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      # Authenticate npm
+      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
+      # Publish package (no global napi needed, artifacts already built)
       - name: Publish package
         run: npm publish --access public
