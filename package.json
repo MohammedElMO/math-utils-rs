@@ -1,9 +1,12 @@
 {
   "name": "math-utils-rs",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "math utils with napi-rs",
   "main": "index.js",
-  "repository": "git@github-personal:MohammedElMO/math-utils-rs.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MohammedElMO/math-utils-rs.git"
+  },
   "license": "MIT",
   "keywords": [
     "napi-rs",
@@ -21,20 +24,14 @@
   "napi": {
     "binaryName": "math-utils-rs",
     "targets": [
-      "x86_64-unknown-linux-musl",
-      "aarch64-unknown-linux-gnu",
-      "i686-pc-windows-msvc",
-      "armv7-unknown-linux-gnueabihf",
-      "aarch64-linux-android",
-      "x86_64-unknown-freebsd",
-      "aarch64-unknown-linux-musl",
-      "aarch64-pc-windows-msvc",
-      "armv7-linux-androideabi",
-      "wasm32-wasip1-threads"
+      "x86_64-unknown-linux-gnu",
+      "x86_64-pc-windows-msvc",
+      "x86_64-apple-darwin",
+      "aarch64-apple-darwin"
     ]
   },
   "engines": {
-    "node": ">= 12.22.0 < 13 || >= 14.17.0 < 15 || >= 15.12.0 < 16 || >= 16.0.0"
+    "node": ">=18"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -50,7 +47,7 @@
     "format:toml": "taplo format",
     "format:rs": "cargo fmt",
     "lint": "oxlint .",
-    "prepublishOnly": "napi prepublish -t npm",
+    "prepublishOnly": "npx --yes @napi-rs/cli@latest prepublish -t npm",
     "test": "ava",
     "version": "napi version",
     "prepare": "husky"
@@ -58,7 +55,7 @@
   "devDependencies": {
     "@emnapi/core": "^1.4.5",
     "@emnapi/runtime": "^1.4.5",
-    "@napi-rs/cli": "^3.0.3",
+    "@napi-rs/cli": "^3.1.5",
     "@oxc-node/core": "^0.0.32",
     "@taplo/cli": "^0.7.0",
     "@tybys/wasm-util": "^0.10.0",
@@ -104,17 +101,5 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.9.2",
-  "optionalDependencies": {
-    "math-utils-rs-linux-x64-musl": "1.0.1",
-    "math-utils-rs-linux-arm64-gnu": "1.0.1",
-    "math-utils-rs-win32-ia32-msvc": "1.0.1",
-    "math-utils-rs-linux-arm-gnueabihf": "1.0.1",
-    "math-utils-rs-android-arm64": "1.0.1",
-    "math-utils-rs-freebsd-x64": "1.0.1",
-    "math-utils-rs-linux-arm64-musl": "1.0.1",
-    "math-utils-rs-win32-arm64-msvc": "1.0.1",
-    "math-utils-rs-android-arm-eabi": "1.0.1",
-    "math-utils-rs-wasm32-wasi": "1.0.1"
-  }
+  "packageManager": "yarn@4.9.2"
 }
