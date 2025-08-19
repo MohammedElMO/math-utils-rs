@@ -34,7 +34,7 @@ jobs:
       - run: npm ci
 
       - name: Install napi CLI
-      - run: npm install --global @napi-rs/cli
+        run: npm install --global @napi-rs/cli
       # Build native bindings for this OS only
       - name: Build bindings
         run: napi build --release --platform
