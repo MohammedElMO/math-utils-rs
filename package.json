@@ -1,6 +1,6 @@
 {
   "name": "math-utils-rs",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "math utils with napi-rs",
   "main": "index.js",
   "repository": "git@github-personal:MohammedElMO/math-utils-rs.git",
@@ -16,7 +16,7 @@
   "files": [
     "index.d.ts",
     "index.js",
-    "bin-math-utils-rs.*.node"
+    "*.node"
   ],
   "napi": {
     "binaryName": "math-utils-rs",
