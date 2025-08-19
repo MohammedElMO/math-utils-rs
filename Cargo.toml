@@ -1,8 +1,8 @@
 
 [package]
-authors = ["LongYinan <lynweklm@gmail.com>"]
+authors = ["MohammedElMO"]
 edition = "2021"
-name = "."
+name = "math-utils-rs"
 version = "0.1.0"
 
 [lib]

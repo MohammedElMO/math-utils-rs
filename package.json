@@ -1,9 +1,9 @@
 {
-  "name": ".",
-  "version": "1.0.0",
+  "name": "math-utils-rs",
+  "version": "1.0.1",
   "description": "math utils with napi-rs",
   "main": "index.js",
-  "repository": "git@github.com:napi-rs/package-template.git",
+  "repository": "git@github-personal:MohammedElMO/math-utils-rs.git",
   "license": "MIT",
   "keywords": [
     "napi-rs",
@@ -15,10 +15,11 @@
   ],
   "files": [
     "index.d.ts",
-    "index.js"
+    "index.js",
+    "bin-math-utils-rs.*.node"
   ],
   "napi": {
-    "binaryName": ".",
+    "binaryName": "bin-math-utils-rs",
     "targets": [
       "x86_64-unknown-linux-musl",
       "aarch64-unknown-linux-gnu",
@@ -103,5 +104,17 @@
     "singleQuote": true,
     "arrowParens": "always"
   },
-  "packageManager": "yarn@4.9.2"
+  "packageManager": "yarn@4.9.2",
+  "optionalDependencies": {
+    "math-utils-rs-linux-x64-musl": "1.0.1",
+    "math-utils-rs-linux-arm64-gnu": "1.0.1",
+    "math-utils-rs-win32-ia32-msvc": "1.0.1",
+    "math-utils-rs-linux-arm-gnueabihf": "1.0.1",
+    "math-utils-rs-android-arm64": "1.0.1",
+    "math-utils-rs-freebsd-x64": "1.0.1",
+    "math-utils-rs-linux-arm64-musl": "1.0.1",
+    "math-utils-rs-win32-arm64-msvc": "1.0.1",
+    "math-utils-rs-android-arm-eabi": "1.0.1",
+    "math-utils-rs-wasm32-wasi": "1.0.1"
+  }
 }

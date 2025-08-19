@@ -1,0 +1,66 @@
+name: Release
+on:
+   push:
+      tags:
+        - 'v*'
+
+jobs:
+jobs:
+  build:
+    name: Build binaries
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Install Node.js
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          check-latest: true
+
+      # Install Rust
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Cache cargo
+      - uses: Swatinem/rust-cache@v2
+
+      # Build native bindings
+      - name: Build with napi-rs
+        uses: napi-rs/napi-rs-action@v2
+        with:
+          napi-version: 2
+          package-name: your-package-name
+
+      # Upload build artifacts for packaging
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bindings
+          path: npm/*
+
+  publish:
+    name: Publish to npm
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: bindings
+          path: ./npm
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - run: npm publish --access public
+        working-directory: ./npm/math-utils-rs
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

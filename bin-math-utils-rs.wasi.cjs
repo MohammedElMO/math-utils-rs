@@ -32,8 +32,8 @@ const __sharedMemory = new WebAssembly.Memory({
   shared: true,
 })
 
-let __wasmFilePath = __nodePath.join(__dirname, '..wasm32-wasi.wasm')
-const __wasmDebugFilePath = __nodePath.join(__dirname, '..wasm32-wasi.debug.wasm')
+let __wasmFilePath = __nodePath.join(__dirname, 'bin-math-utils-rs.wasm32-wasi.wasm')
+const __wasmDebugFilePath = __nodePath.join(__dirname, 'bin-math-utils-rs.wasm32-wasi.debug.wasm')
 
 if (__nodeFs.existsSync(__wasmDebugFilePath)) {
   __wasmFilePath = __wasmDebugFilePath
@@ -41,7 +41,7 @@ if (__nodeFs.existsSync(__wasmDebugFilePath)) {
   try {
     __wasmFilePath = __nodePath.resolve('math-utils-rs-wasm32-wasi')
   } catch {
-    throw new Error('Cannot find ..wasm32-wasi.wasm file, and math-utils-rs-wasm32-wasi package is not installed.')
+    throw new Error('Cannot find bin-math-utils-rs.wasm32-wasi.wasm file, and math-utils-rs-wasm32-wasi package is not installed.')
   }
 }
 
