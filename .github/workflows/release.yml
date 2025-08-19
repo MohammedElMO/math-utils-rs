@@ -69,6 +69,14 @@ jobs:
           check-latest: true
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+            pattern: "npm-*"
+            merge-multiple: true
+            path: ./npm
+
+
       # This updates optionalDependencies + binary metadata for the main package
       - name: Prepublish (prepare main package)
         run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
@@ -77,3 +85,6 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --provenance
+
+    permissions:
+      contents: write

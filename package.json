@@ -1,6 +1,6 @@
 {
   "name": "math-utils-rs",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "math utils with napi-rs",
   "main": "index.js",
   "repository": {
@@ -50,7 +50,7 @@
     "prepublishOnly": "npx -p @napi-rs/cli@latest napi prepublish -t npm",
     "test": "ava",
     "version": "napi version",
-    "prepare": "husky"
+    "prepare": "echo 'skip husky in CI'"
   },
   "devDependencies": {
     "@emnapi/core": "^1.4.5",
