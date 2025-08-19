@@ -37,7 +37,8 @@ jobs:
         run: npm install --global @napi-rs/cli
       # Build native bindings for this OS only
       - name: Build bindings
-        run: napi build --release --platform
+        run: napi build --release --platform --output ./npm
+
 
       # Upload OS-specific artifacts
       - name: Upload artifacts
