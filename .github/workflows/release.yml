@@ -22,43 +22,46 @@ jobs:
         node: [22]
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-      - uses: actions/cache@v4
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
         with:
-            path: |
-              ~/.cargo/registry
-              ~/.cargo/git
-              target
-            key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-            restore-keys: |
-              ${{ runner.os }}-cargo-
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
 
-
-
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
           cache: npm
           check-latest: true
           registry-url: 'https://registry.npmjs.org'
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
 
-      - name: Install JS deps
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install JS dependencies
         run: npm ci
 
       - name: Build bindings for this platform
         run: npx -p @napi-rs/cli@latest napi build --platform --release --output-dir ./npm
 
-
       - name: Show build output
         run: ls -R ./npm
 
-      - name: Publish platform package(s)
+      - name: Publish platform packages to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        shell: bash
         run: |
           shopt -s nullglob
           for pkg in ./npm/*; do
@@ -68,7 +71,7 @@ jobs:
             fi
           done
 
-      - name: Upload npm dir (optional for debugging)
+      - name: Upload npm artifacts (optional)
         uses: actions/upload-artifact@v4
         with:
           name: npm-${{ matrix.os }}
@@ -77,45 +80,44 @@ jobs:
   publish-main:
     name: Publish aggregator package
     needs: build-and-publish-binaries
-
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
-          check-latest: true
           cache: npm
           registry-url: 'https://registry.npmjs.org'
+          check-latest: true
 
-      - uses: actions/cache@v4
+      - name: Cache Rust dependencies
+        uses: actions/cache@v4
         with:
-
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-              target
+            target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Download all artifacts
+      - name: Download platform artifacts
         uses: actions/download-artifact@v4
         with:
-            pattern: "npm-*"
-            merge-multiple: true
-            path: ./npm
+          pattern: "npm-*"
+          merge-multiple: true
+          path: ./npm
 
-
-      # This updates optionalDependencies + binary metadata for the main package
-      - name: Prepublish (prepare main package)
-        run:  npx -p @napi-rs/cli@latest napi prepublish -t npm
+      - name: Prepublish main package (skip GitHub release)
+        run: npx -p @napi-rs/cli@latest napi prepublish -t npm --skip-gh-release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
 
-      - name: Publish main package
+      - name: Publish main package to npm
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public --provenance
-
