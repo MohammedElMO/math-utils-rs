@@ -18,8 +18,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        node: [22]
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        node: [ 22 ]
 
     steps:
       - name: Checkout code
@@ -60,16 +60,19 @@ jobs:
         run: ls -R ./npm
 
       - name: Publish platform packages to npm
+        shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: |
-          shopt -s nullglob
-          for pkg in ./npm/*; do
-            if [ -f "$pkg/package.json" ]; then
-              echo "Publishing $pkg"
-              npm publish "$pkg" --access public --provenance
-            fi
-          done
+          run: |
+            shopt -s nullglob
+            for pkg in ./npm/*; do
+              if [ -f "$pkg/package.json" ]; then
+                echo "Publishing $pkg"
+                npm publish "$pkg" --access public --provenance
+              fi
+            done
+
+
 
       - name: Upload npm artifacts (optional)
         uses: actions/upload-artifact@v4
